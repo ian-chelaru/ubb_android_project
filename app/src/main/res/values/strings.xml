@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">SportEventsApp</string>
+    <string name="create_event">Create New Event</string>
     <string name="view_event">View event</string>
-    <string name="remove_event">Remove event</string>
     <string name="update_event">Update event</string>
+    <string name="remove_event">Remove event</string>
 </resources>

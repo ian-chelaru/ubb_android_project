@@ -12,10 +12,13 @@ import android.widget.ListView;
 
 import com.ian.sporteventsapp.adapters.EventAdapter;
 import com.ian.sporteventsapp.model.Event;
+import com.ian.sporteventsapp.repository.EventRepository;
 import com.ian.sporteventsapp.service.EventService;
 
 public class MainActivity extends AppCompatActivity
 {
+    private EventAdapter eventAdapter;
+    private EventRepository eventRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -23,8 +26,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        eventRepository = new EventRepository(EventService.getEvents());
+
         ListView eventListView = findViewById(R.id.events_list_view);
-        EventAdapter eventAdapter = new EventAdapter(this, EventService.getEvents());
+        eventAdapter = new EventAdapter(this, eventRepository.getEvents());
         eventListView.setAdapter(eventAdapter);
 
         registerForContextMenu(eventListView);
@@ -44,6 +49,23 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item)
     {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        switch (item.getItemId())
+        {
+            case R.id.view_event:
+                System.out.println("View item");
+                break;
+            case R.id.remove_event:
+                System.out.println("Remove item");
+                eventRepository.removeEventByIndex(info.position);
+                eventAdapter.notifyDataSetChanged();
+                break;
+            case R.id.update_event:
+                System.out.println("Update item");
+                break;
+        }
+
         return super.onContextItemSelected(item);
     }
 }
