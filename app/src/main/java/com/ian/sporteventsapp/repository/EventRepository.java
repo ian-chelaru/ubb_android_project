@@ -6,6 +6,8 @@ import java.util.List;
 
 public class EventRepository
 {
+    private static int KEY = 3;
+
     private List<Event> events;
 
     public EventRepository(List<Event> events)
@@ -25,6 +27,8 @@ public class EventRepository
 
     public void addEvent(Event event)
     {
+        KEY += 1;
+        event.setId(KEY);
         events.add(event);
     }
 

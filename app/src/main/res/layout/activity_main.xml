@@ -14,7 +14,8 @@
         android:layout_gravity="top|end"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="5dp"
-        android:text="@string/create_event" />
+        android:text="@string/create_event"
+        android:onClick="createNewEvent"/>
 
     <ListView
         android:id="@+id/events_list_view"
