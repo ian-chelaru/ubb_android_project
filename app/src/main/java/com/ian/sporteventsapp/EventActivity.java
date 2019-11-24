@@ -18,7 +18,7 @@ public class EventActivity extends AppCompatActivity
     private EditText locationEditText;
     private EditText startTimeEditText;
     private EditText endTimeEditText;
-
+    private EditText descriptionEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -30,6 +30,7 @@ public class EventActivity extends AppCompatActivity
         locationEditText = findViewById(R.id.location_edit_text);
         startTimeEditText = findViewById(R.id.start_time_edit_text);
         endTimeEditText = findViewById(R.id.end_time_edit_text);
+        descriptionEditText = findViewById(R.id.description_edit_text);
 
         fillFields();
     }
@@ -42,6 +43,7 @@ public class EventActivity extends AppCompatActivity
         locationEditText.setText(intent.getStringExtra("event_location"));
         startTimeEditText.setText(intent.getStringExtra("event_start_time"));
         endTimeEditText.setText(intent.getStringExtra("event_end_time"));
+        descriptionEditText.setText(intent.getStringExtra("event_description"));
     }
 
     public void saveAction(View view)
@@ -50,12 +52,14 @@ public class EventActivity extends AppCompatActivity
         String eventLocation = locationEditText.getText().toString();
         String eventStartTime = startTimeEditText.getText().toString();
         String eventEndTime = endTimeEditText.getText().toString();
+        String eventDescription = descriptionEditText.getText().toString();
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra("new_event_name", eventName);
         resultIntent.putExtra("new_event_location", eventLocation);
         resultIntent.putExtra("new_event_start_time", eventStartTime);
         resultIntent.putExtra("new_event_end_time", eventEndTime);
+        resultIntent.putExtra("new_event_description", eventDescription);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }

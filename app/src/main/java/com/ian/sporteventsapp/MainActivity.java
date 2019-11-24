@@ -64,14 +64,12 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case R.id.view_event:
-                System.out.println("View item");
+                viewEvent(info.position);
                 break;
             case R.id.update_event:
-                System.out.println("Update item");
                 updateEvent(info.position);
                 break;
             case R.id.remove_event:
-                System.out.println("Remove item");
                 removeEvent(info.position);
                 break;
         }
@@ -86,7 +84,21 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra("event_location", getResources().getString(R.string.default_location));
         intent.putExtra("event_start_time", getResources().getString(R.string.default_start_time));
         intent.putExtra("event_end_time", getResources().getString(R.string.default_end_time));
+        intent.putExtra("event_description", getResources().getString(R.string.default_description));
         startActivityForResult(intent, CREATE_EVENT_REQUEST);
+    }
+
+    private void viewEvent(int index)
+    {
+        Event event = eventRepository.getEventByIndex(index);
+
+        Intent intent = new Intent(this, ViewEventActivity.class);
+        intent.putExtra("event_name", event.getName());
+        intent.putExtra("event_location", event.getLocation());
+        intent.putExtra("event_start_time", event.getStartTime().toString());
+        intent.putExtra("event_end_time", event.getEndTime().toString());
+        intent.putExtra("event_description", event.getDescription());
+        startActivity(intent);
     }
 
     private void updateEvent(int index)
@@ -98,6 +110,7 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra("event_location", eventToBeUpdated.getLocation());
         intent.putExtra("event_start_time", eventToBeUpdated.getStartTime().toString());
         intent.putExtra("event_end_time", eventToBeUpdated.getEndTime().toString());
+        intent.putExtra("event_description", eventToBeUpdated.getDescription());
         startActivityForResult(intent, UPDATE_EVENT_REQUEST);
     }
 
@@ -131,6 +144,7 @@ public class MainActivity extends AppCompatActivity
                 eventToBeUpdated.setLocation(newEvent.getLocation());
                 eventToBeUpdated.setStartTime(newEvent.getStartTime());
                 eventToBeUpdated.setEndTime(newEvent.getEndTime());
+                eventToBeUpdated.setDescription(newEvent.getDescription());
                 eventAdapter.notifyDataSetChanged();
             }
         }
@@ -142,12 +156,14 @@ public class MainActivity extends AppCompatActivity
         String eventLocation = data.getStringExtra("new_event_location");
         String eventStartTime = data.getStringExtra("new_event_start_time");
         String eventEndTime = data.getStringExtra("new_event_end_time");
+        String eventDescription = data.getStringExtra("new_event_description");
 
         Event event = new Event();
         event.setName(eventName);
         event.setLocation(eventLocation);
         event.setStartTime(LocalTime.parse(eventStartTime));
         event.setEndTime(LocalTime.parse(eventEndTime));
+        event.setDescription(eventDescription);
         return event;
     }
 
