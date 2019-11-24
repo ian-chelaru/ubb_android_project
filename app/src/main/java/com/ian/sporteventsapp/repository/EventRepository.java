@@ -36,4 +36,9 @@ public class EventRepository
     {
         events.remove(index);
     }
+
+    public Event getEventByIndex(int index)
+    {
+        return events.get(index);
+    }
 }

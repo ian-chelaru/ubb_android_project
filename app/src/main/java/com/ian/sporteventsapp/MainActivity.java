@@ -23,9 +23,12 @@ import java.time.LocalTime;
 public class MainActivity extends AppCompatActivity
 {
     private static final int CREATE_EVENT_REQUEST = 1;
+    private static final int UPDATE_EVENT_REQUEST = 2;
 
     private EventAdapter eventAdapter;
     private EventRepository eventRepository;
+
+    private Event eventToBeUpdated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -63,13 +66,13 @@ public class MainActivity extends AppCompatActivity
             case R.id.view_event:
                 System.out.println("View item");
                 break;
-            case R.id.remove_event:
-                System.out.println("Remove item");
-                eventRepository.removeEventByIndex(info.position);
-                eventAdapter.notifyDataSetChanged();
-                break;
             case R.id.update_event:
                 System.out.println("Update item");
+                updateEvent(info.position);
+                break;
+            case R.id.remove_event:
+                System.out.println("Remove item");
+                removeEvent(info.position);
                 break;
         }
 
@@ -79,7 +82,29 @@ public class MainActivity extends AppCompatActivity
     public void createNewEvent(View view)
     {
         Intent intent = new Intent(this, EventActivity.class);
+        intent.putExtra("event_name", getResources().getString(R.string.default_name));
+        intent.putExtra("event_location", getResources().getString(R.string.default_location));
+        intent.putExtra("event_start_time", getResources().getString(R.string.default_start_time));
+        intent.putExtra("event_end_time", getResources().getString(R.string.default_end_time));
         startActivityForResult(intent, CREATE_EVENT_REQUEST);
+    }
+
+    private void updateEvent(int index)
+    {
+        eventToBeUpdated = eventRepository.getEventByIndex(index);
+
+        Intent intent = new Intent(this, EventActivity.class);
+        intent.putExtra("event_name", eventToBeUpdated.getName());
+        intent.putExtra("event_location", eventToBeUpdated.getLocation());
+        intent.putExtra("event_start_time", eventToBeUpdated.getStartTime().toString());
+        intent.putExtra("event_end_time", eventToBeUpdated.getEndTime().toString());
+        startActivityForResult(intent, UPDATE_EVENT_REQUEST);
+    }
+
+    private void removeEvent(int index)
+    {
+        eventRepository.removeEventByIndex(index);
+        eventAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -96,6 +121,19 @@ public class MainActivity extends AppCompatActivity
                 eventAdapter.notifyDataSetChanged();
             }
         }
+        else if (requestCode == UPDATE_EVENT_REQUEST)
+        {
+            if (resultCode == Activity.RESULT_OK)
+            {
+                assert data != null;
+                Event newEvent = createEventFromIntent(data);
+                eventToBeUpdated.setName(newEvent.getName());
+                eventToBeUpdated.setLocation(newEvent.getLocation());
+                eventToBeUpdated.setStartTime(newEvent.getStartTime());
+                eventToBeUpdated.setEndTime(newEvent.getEndTime());
+                eventAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     private Event createEventFromIntent(Intent data)
@@ -108,20 +146,9 @@ public class MainActivity extends AppCompatActivity
         Event event = new Event();
         event.setName(eventName);
         event.setLocation(eventLocation);
-
-        assert eventStartTime != null;
-        event.setStartTime(createLocalTimeFromString(eventStartTime));
-        assert eventEndTime != null;
-        event.setEndTime(createLocalTimeFromString(eventEndTime));
-
+        event.setStartTime(LocalTime.parse(eventStartTime));
+        event.setEndTime(LocalTime.parse(eventEndTime));
         return event;
     }
 
-    private LocalTime createLocalTimeFromString(String time)
-    {
-        int colonIndex = time.indexOf(":");
-        int hour = Integer.valueOf(time.substring(0, colonIndex));
-        int minute = Integer.valueOf(time.substring(colonIndex + 1));
-        return LocalTime.of(hour, minute);
-    }
 }

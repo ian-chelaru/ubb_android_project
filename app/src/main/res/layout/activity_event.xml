@@ -10,11 +10,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:labelFor="@id/name"
+        android:labelFor="@id/name_edit_text"
         android:text="@string/name" />
 
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/name_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:importantForAutofill="no"
@@ -23,11 +23,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:labelFor="@id/location"
+        android:labelFor="@id/location_edit_text"
         android:text="@string/location" />
 
     <EditText
-        android:id="@+id/location"
+        android:id="@+id/location_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:importantForAutofill="no"
@@ -36,11 +36,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:labelFor="@id/start_time"
+        android:labelFor="@id/start_time_edit_text"
         android:text="@string/start_time" />
 
     <EditText
-        android:id="@+id/start_time"
+        android:id="@+id/start_time_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:importantForAutofill="no"
@@ -49,11 +49,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:labelFor="@id/end_time"
+        android:labelFor="@id/end_time_edit_text"
         android:text="@string/end_time" />
 
     <EditText
-        android:id="@+id/end_time"
+        android:id="@+id/end_time_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:importantForAutofill="no"
