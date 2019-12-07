@@ -3,6 +3,9 @@ package com.ian.sporteventsapp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,12 +14,11 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.ian.sporteventsapp.adapters.EventAdapter;
+import com.ian.sporteventsapp.adapters.EventListAdapter;
 import com.ian.sporteventsapp.model.Event;
-import com.ian.sporteventsapp.repository.EventRepository;
-import com.ian.sporteventsapp.service.EventService;
+import com.ian.sporteventsapp.viewmodel.EventViewModel;
 
 import java.time.LocalTime;
 
@@ -25,9 +27,7 @@ public class MainActivity extends AppCompatActivity
     private static final int CREATE_EVENT_REQUEST = 1;
     private static final int UPDATE_EVENT_REQUEST = 2;
 
-    private EventAdapter eventAdapter;
-    private EventRepository eventRepository;
-
+    private EventViewModel eventViewModel;
     private Event eventToBeUpdated;
 
     @Override
@@ -36,13 +36,16 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        eventRepository = new EventRepository(EventService.getEvents());
+        RecyclerView eventRecyclerView = findViewById(R.id.event_recycler_view);
+        final EventListAdapter eventListAdapter = new EventListAdapter(this);
+        eventRecyclerView.setAdapter(eventListAdapter);
+        eventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ListView eventListView = findViewById(R.id.events_list_view);
-        eventAdapter = new EventAdapter(this, eventRepository.getEvents());
-        eventListView.setAdapter(eventAdapter);
+        eventViewModel = ViewModelProviders.of(this).get(EventViewModel.class);
+        eventViewModel.getAllEvents().observe(this, eventListAdapter::setEvents
+        );
 
-        registerForContextMenu(eventListView);
+        registerForContextMenu(eventRecyclerView);
     }
 
     @Override
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        if (v.getId() == R.id.events_list_view)
+        if (v.getId() == R.id.event_recycler_view)
         {
             getMenuInflater().inflate(R.menu.event_menu, menu);
         }
@@ -64,13 +67,16 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case R.id.view_event:
-                viewEvent(info.position);
+//                viewEvent(info.position);
+                System.out.println("VIEW EVENT");
                 break;
             case R.id.update_event:
-                updateEvent(info.position);
+//                updateEvent(info.position);
+                System.out.println("UPDATE EVENT");
                 break;
             case R.id.remove_event:
-                removeEvent(info.position);
+//                removeEvent(info.position);
+                System.out.println("REMOVE EVENT");
                 break;
         }
 
@@ -88,37 +94,37 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent, CREATE_EVENT_REQUEST);
     }
 
-    private void viewEvent(int index)
-    {
-        Event event = eventRepository.getEventByIndex(index);
-
-        Intent intent = new Intent(this, ViewEventActivity.class);
-        intent.putExtra("event_name", event.getName());
-        intent.putExtra("event_location", event.getLocation());
-        intent.putExtra("event_start_time", event.getStartTime().toString());
-        intent.putExtra("event_end_time", event.getEndTime().toString());
-        intent.putExtra("event_description", event.getDescription());
-        startActivity(intent);
-    }
-
-    private void updateEvent(int index)
-    {
-        eventToBeUpdated = eventRepository.getEventByIndex(index);
-
-        Intent intent = new Intent(this, EventActivity.class);
-        intent.putExtra("event_name", eventToBeUpdated.getName());
-        intent.putExtra("event_location", eventToBeUpdated.getLocation());
-        intent.putExtra("event_start_time", eventToBeUpdated.getStartTime().toString());
-        intent.putExtra("event_end_time", eventToBeUpdated.getEndTime().toString());
-        intent.putExtra("event_description", eventToBeUpdated.getDescription());
-        startActivityForResult(intent, UPDATE_EVENT_REQUEST);
-    }
-
-    private void removeEvent(int index)
-    {
-        eventRepository.removeEventByIndex(index);
-        eventAdapter.notifyDataSetChanged();
-    }
+//    private void viewEvent(int index)
+//    {
+//        Event event = eventRepository.getEventByIndex(index);
+//
+//        Intent intent = new Intent(this, ViewEventActivity.class);
+//        intent.putExtra("event_name", event.getName());
+//        intent.putExtra("event_location", event.getLocation());
+//        intent.putExtra("event_start_time", event.getStartTime().toString());
+//        intent.putExtra("event_end_time", event.getEndTime().toString());
+//        intent.putExtra("event_description", event.getDescription());
+//        startActivity(intent);
+//    }
+//
+//    private void updateEvent(int index)
+//    {
+//        eventToBeUpdated = eventRepository.getEventByIndex(index);
+//
+//        Intent intent = new Intent(this, EventActivity.class);
+//        intent.putExtra("event_name", eventToBeUpdated.getName());
+//        intent.putExtra("event_location", eventToBeUpdated.getLocation());
+//        intent.putExtra("event_start_time", eventToBeUpdated.getStartTime().toString());
+//        intent.putExtra("event_end_time", eventToBeUpdated.getEndTime().toString());
+//        intent.putExtra("event_description", eventToBeUpdated.getDescription());
+//        startActivityForResult(intent, UPDATE_EVENT_REQUEST);
+//    }
+//
+//    private void removeEvent(int index)
+//    {
+//        eventRepository.removeEventByIndex(index);
+//        eventAdapter.notifyDataSetChanged();
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
@@ -130,8 +136,7 @@ public class MainActivity extends AppCompatActivity
             {
                 assert data != null;
                 Event newEvent = createEventFromIntent(data);
-                eventRepository.addEvent(newEvent);
-                eventAdapter.notifyDataSetChanged();
+                eventViewModel.insert(newEvent);
             }
         }
         else if (requestCode == UPDATE_EVENT_REQUEST)
@@ -145,7 +150,6 @@ public class MainActivity extends AppCompatActivity
                 eventToBeUpdated.setStartTime(newEvent.getStartTime());
                 eventToBeUpdated.setEndTime(newEvent.getEndTime());
                 eventToBeUpdated.setDescription(newEvent.getDescription());
-                eventAdapter.notifyDataSetChanged();
             }
         }
     }

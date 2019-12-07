@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 
 import com.ian.sporteventsapp.R;
 import com.ian.sporteventsapp.model.Event;
@@ -18,9 +19,9 @@ import java.util.List;
 
 public class EventAdapter extends ArrayAdapter<Event>
 {
-    public EventAdapter(Context context, List<Event> events)
+    public EventAdapter(Context context, LiveData<List<Event>> events)
     {
-        super(context, 0, events);
+        super(context, 0, events.getValue());
     }
 
     @NonNull

@@ -17,4 +17,6 @@
     <string name="default_start_time">08:30</string>
     <string name="default_end_time">09:15</string>
     <string name="default_description">Description0</string>
+
+    <string name="no_events">No events</string>
 </resources>

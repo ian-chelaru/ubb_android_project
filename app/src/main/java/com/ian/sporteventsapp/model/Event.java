@@ -1,22 +1,32 @@
 package com.ian.sporteventsapp.model;
 
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.time.LocalTime;
 
+@Entity(tableName = "event_table")
 public class Event
 {
-    private int id;
+    @PrimaryKey(autoGenerate = true)
+    private Integer id;
+
     private String name;
+
     private String location;
+
     private LocalTime startTime;
+
     private LocalTime endTime;
+
     private String description;
 
     public Event()
     {
     }
 
-    public Event(int id, String name, String location, LocalTime startTime, LocalTime endTime, String description)
+    public Event(Integer id, String name, String location, LocalTime startTime, LocalTime endTime, String description)
     {
         this.id = id;
         this.name = name;
@@ -26,12 +36,12 @@ public class Event
         this.description = description;
     }
 
-    public int getId()
+    public Integer getId()
     {
         return id;
     }
 
-    public void setId(int id)
+    public void setId(Integer id)
     {
         this.id = id;
     }
