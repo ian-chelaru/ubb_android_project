@@ -2,8 +2,10 @@ package com.ian.sporteventsapp.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.ian.sporteventsapp.model.Event;
 
@@ -17,4 +19,10 @@ public interface EventDao
 
     @Query("SELECT * from event_table")
     LiveData<List<Event>> getAll();
+
+    @Delete
+    void delete(Event event);
+
+    @Update
+    void update(Event event);
 }

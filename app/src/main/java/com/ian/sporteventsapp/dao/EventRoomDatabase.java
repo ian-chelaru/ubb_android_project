@@ -51,7 +51,7 @@ public abstract class EventRoomDatabase extends RoomDatabase
 
             databaseWriteExecutor.execute(() -> {
                 EventDao eventDao = instance.eventDao();
-                EventService.getEvents().forEach(eventDao::insert);
+                EventService.getInitialEvents().forEach(eventDao::insert);
             });
         }
     };

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DataExportManager">
@@ -24,13 +24,13 @@
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
     <loaded-nodes>
-      <connection connection-id="dd2a8bc9-a710-4bc6-be4f-6223baf51fbf">
+      <connection connection-id="c64fe432-1812-4c79-988b-594f7ed24e6a">
         <schema name="main" object-types="table, view" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="dd2a8bc9-a710-4bc6-be4f-6223baf51fbf">
+    <connection id="c64fe432-1812-4c79-988b-594f7ed24e6a">
       <console name="Connection" type="STANDARD" schema="main" session="Main" />
     </connection>
   </component>
@@ -38,7 +38,7 @@
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="dd2a8bc9-a710-4bc6-be4f-6223baf51fbf" />
+    <connection id="c64fe432-1812-4c79-988b-594f7ed24e6a" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -63,7 +63,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="dd2a8bc9-a710-4bc6-be4f-6223baf51fbf" active="true">
+      <connection id="c64fe432-1812-4c79-988b-594f7ed24e6a" active="true">
         <database>
           <name value="Connection" />
           <description value="" />
@@ -78,7 +78,7 @@
           <port value="1234" />
           <database value="database" />
           <files>
-            <file path="C:\Users\ianch\OneDrive\Documents\AndroidStudio\DeviceExplorer\Pixel_2_API_29 [emulator-5554]\data\data\com.ian.sporteventsapp\databases\event_database" schema="main" />
+            <file path="D:\SQLite databases\event_database.db" schema="main" />
           </files>
           <type value="NONE" />
           <user value="" />

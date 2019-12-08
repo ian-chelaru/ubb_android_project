@@ -10,6 +10,7 @@ import com.ian.sporteventsapp.model.Event;
 import com.ian.sporteventsapp.repository.EventRepository;
 
 import java.util.List;
+import java.util.Objects;
 
 public class EventViewModel extends AndroidViewModel
 {
@@ -24,6 +25,11 @@ public class EventViewModel extends AndroidViewModel
         events = eventRepository.getAllEvents();
     }
 
+    public Event getEventByPosition(int position)
+    {
+        return Objects.requireNonNull(events.getValue()).get(position);
+    }
+
     public LiveData<List<Event>> getAllEvents()
     {
         return events;
@@ -32,5 +38,15 @@ public class EventViewModel extends AndroidViewModel
     public void insert(Event event)
     {
         eventRepository.insert(event);
+    }
+
+    public void delete(Event event)
+    {
+        eventRepository.delete(event);
+    }
+
+    public void update(Event event)
+    {
+        eventRepository.update(event);
     }
 }
