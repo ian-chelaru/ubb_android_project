@@ -22,18 +22,10 @@ public class Event
 
     private String description;
 
+    private boolean isPersistedInServer;
+
     public Event()
     {
-    }
-
-    public Event(Integer id, String name, String location, LocalTime startTime, LocalTime endTime, String description)
-    {
-        this.id = id;
-        this.name = name;
-        this.location = location;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.description = description;
     }
 
     public Integer getId()
@@ -94,6 +86,16 @@ public class Event
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+    public boolean isPersistedInServer()
+    {
+        return isPersistedInServer;
+    }
+
+    public void setPersistedInServer(boolean persistedInServer)
+    {
+        isPersistedInServer = persistedInServer;
     }
 
     @Override

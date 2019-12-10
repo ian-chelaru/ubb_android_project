@@ -26,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -143,7 +145,6 @@ public class MainActivity extends AppCompatActivity
             {
                 assert data != null;
                 Event newEvent = createEventFromIntent(data);
-//                eventViewModel.insert(newEvent);
                 insertServerEvent(newEvent);
             }
         }
@@ -189,33 +190,21 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(@NotNull Call<EventModel> call, @NotNull Response<EventModel> response)
             {
-                int statusCode = response.code();
-                System.out.println(statusCode);
                 if (response.isSuccessful())
                 {
                     EventModel responseBody = response.body();
                     System.out.println(responseBody);
                     assert responseBody != null;
-                    eventViewModel.insert(EventConverter.convertEventModelToEvent(responseBody));
-                }
-                else
-                {
-                    String errorMessage;
-                    try
-                    {
-                        errorMessage = response.errorBody().string();
-                    } catch (IOException e)
-                    {
-                        errorMessage = "Error message cannot be obtained!";
-                        e.printStackTrace();
-                    }
-                    System.out.println(errorMessage);
+                    Event newEvent = EventConverter.convertEventModelToEvent(responseBody);
+                    newEvent.setPersistedInServer(true);
+                    eventViewModel.insert(newEvent);
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<EventModel> call, @NotNull Throwable t)
             {
+                event.setPersistedInServer(false);
                 eventViewModel.insert(event);
                 displayToastMessage("No internet connection. Data persisted locally.");
             }
@@ -231,26 +220,19 @@ public class MainActivity extends AppCompatActivity
             {
                 if (response.isSuccessful())
                 {
+                    Objects.requireNonNull(eventViewModel.getAllEvents().getValue())
+                            .stream()
+                            .filter(event -> !event.isPersistedInServer())
+                            .forEach(event -> insertServerEvent(event));
+
                     List<EventModel> responseBody = response.body();
                     assert responseBody != null;
                     eventViewModel.deleteAll();
-                    responseBody.forEach(eventModel ->
-                            eventViewModel.insert(EventConverter.convertEventModelToEvent(eventModel)));
-                }
-                else
-                {
-                    int errorStatusCode = response.code();
-                    String errorMessage;
-                    try
-                    {
-                        errorMessage = response.errorBody().string();
-                    } catch (IOException e)
-                    {
-                        errorMessage = "Error message cannot be obtained!";
-                        e.printStackTrace();
-                    }
-                    System.out.println(errorStatusCode);
-                    System.out.println(errorMessage);
+                    responseBody.forEach(eventModel -> {
+                        Event event = EventConverter.convertEventModelToEvent(eventModel);
+                        event.setPersistedInServer(true);
+                        eventViewModel.insert(event);
+                    });
                 }
             }
 
@@ -270,24 +252,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(@NotNull Call<Void> call, @NotNull Response<Void> response)
             {
-                int statusCode = response.code();
-                System.out.println(statusCode);
                 if (response.isSuccessful())
                 {
                     eventViewModel.update(event);
-                }
-                else
-                {
-                    String errorMessage;
-                    try
-                    {
-                        errorMessage = response.errorBody().string();
-                    } catch (IOException e)
-                    {
-                        errorMessage = "Error message cannot be obtained!";
-                        e.printStackTrace();
-                    }
-                    System.out.println(errorMessage);
                 }
             }
 
@@ -307,24 +274,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(@NotNull Call<Void> call, @NotNull Response<Void> response)
             {
-                int statusCode = response.code();
-                System.out.println(statusCode);
                 if (response.isSuccessful())
                 {
                     eventViewModel.delete(event);
-                }
-                else
-                {
-                    String errorMessage;
-                    try
-                    {
-                        errorMessage = response.errorBody().string();
-                    } catch (IOException e)
-                    {
-                        errorMessage = "Error message cannot be obtained!";
-                        e.printStackTrace();
-                    }
-                    System.out.println(errorMessage);
                 }
             }
 
