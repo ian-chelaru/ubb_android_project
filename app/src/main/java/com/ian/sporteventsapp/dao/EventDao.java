@@ -7,7 +7,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.ian.sporteventsapp.model.Event;
+import com.ian.sporteventsapp.entities.Event;
 
 import java.util.List;
 

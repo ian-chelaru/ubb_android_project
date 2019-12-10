@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 
 import com.ian.sporteventsapp.dao.EventDao;
 import com.ian.sporteventsapp.dao.EventRoomDatabase;
-import com.ian.sporteventsapp.model.Event;
+import com.ian.sporteventsapp.entities.Event;
 
 import java.util.List;
 

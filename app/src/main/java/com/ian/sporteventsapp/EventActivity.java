@@ -8,10 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.ian.sporteventsapp.model.Event;
-
-import java.time.LocalTime;
-
 public class EventActivity extends AppCompatActivity
 {
     private EditText nameEditText;

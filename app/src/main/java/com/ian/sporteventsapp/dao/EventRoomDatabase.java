@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.ian.sporteventsapp.model.Event;
+import com.ian.sporteventsapp.entities.Event;
 import com.ian.sporteventsapp.service.EventService;
 import com.ian.sporteventsapp.util.Converters;
 

@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ian.sporteventsapp.R;
-import com.ian.sporteventsapp.model.Event;
+import com.ian.sporteventsapp.entities.Event;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.ian.sporteventsapp.model.Event;
+import com.ian.sporteventsapp.entities.Event;
 import com.ian.sporteventsapp.repository.EventRepository;
 
 import java.util.List;

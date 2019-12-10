@@ -1,6 +1,6 @@
 package com.ian.sporteventsapp.service;
 
-import com.ian.sporteventsapp.model.Event;
+import com.ian.sporteventsapp.entities.Event;
 
 import java.time.LocalTime;
 import java.util.ArrayList;

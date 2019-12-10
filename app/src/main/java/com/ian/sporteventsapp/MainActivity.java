@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.ian.sporteventsapp.adapters.EventListAdapter;
-import com.ian.sporteventsapp.model.Event;
+import com.ian.sporteventsapp.entities.Event;
 import com.ian.sporteventsapp.viewmodel.EventViewModel;
 
 import java.time.LocalTime;

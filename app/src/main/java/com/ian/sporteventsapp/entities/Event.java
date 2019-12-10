@@ -1,4 +1,4 @@
-package com.ian.sporteventsapp.model;
+package com.ian.sporteventsapp.entities;
 
 
 import androidx.room.Entity;
