@@ -41,4 +41,9 @@ public class EventRepository
     {
         EventRoomDatabase.databaseWriteExecutor.execute(() -> eventDao.update(event));
     }
+
+    public void deleteAll()
+    {
+        EventRoomDatabase.databaseWriteExecutor.execute(() -> eventDao.deleteAll());
+    }
 }

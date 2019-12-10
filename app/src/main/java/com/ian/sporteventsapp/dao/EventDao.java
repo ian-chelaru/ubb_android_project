@@ -17,7 +17,7 @@ public interface EventDao
     @Insert
     void insert(Event event);
 
-    @Query("SELECT * from event_table")
+    @Query("SELECT * FROM event_table")
     LiveData<List<Event>> getAll();
 
     @Delete
@@ -25,4 +25,7 @@ public interface EventDao
 
     @Update
     void update(Event event);
+
+    @Query("DELETE FROM event_table")
+    void deleteAll();
 }

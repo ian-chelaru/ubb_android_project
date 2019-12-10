@@ -82,7 +82,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         {
             String time = event.getStartTime().toString() + ":" + event.getEndTime().toString();
 
-            nameView.setText(event.getName());
+            nameView.setText(event.getName() + " " + event.getId());
             timeView.setText(time);
             locationView.setText(event.getLocation());
         }

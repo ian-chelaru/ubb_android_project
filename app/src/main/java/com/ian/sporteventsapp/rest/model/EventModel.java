@@ -1,39 +1,35 @@
-package com.ian.sporteventsapp.entities;
+package com.ian.sporteventsapp.rest.model;
 
+import com.google.gson.annotations.SerializedName;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import java.time.LocalTime;
-
-@Entity(tableName = "event_table")
-public class Event
+public class EventModel
 {
-    @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
     private Integer id;
 
+    @SerializedName("name")
     private String name;
 
+    @SerializedName("location")
     private String location;
 
-    private LocalTime startTime;
+    @SerializedName("startTime")
+    private String startTime;
 
-    private LocalTime endTime;
+    @SerializedName("endTime")
+    private String endTime;
 
-    private String description;
-
-    public Event()
+    public EventModel()
     {
     }
 
-    public Event(Integer id, String name, String location, LocalTime startTime, LocalTime endTime, String description)
+    public EventModel(Integer id, String name, String location, String startTime, String endTime)
     {
         this.id = id;
         this.name = name;
         this.location = location;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.description = description;
     }
 
     public Integer getId()
@@ -66,45 +62,35 @@ public class Event
         this.location = location;
     }
 
-    public LocalTime getStartTime()
+    public String getStartTime()
     {
         return startTime;
     }
 
-    public void setStartTime(LocalTime startTime)
+    public void setStartTime(String startTime)
     {
         this.startTime = startTime;
     }
 
-    public LocalTime getEndTime()
+    public String getEndTime()
     {
         return endTime;
     }
 
-    public void setEndTime(LocalTime endTime)
+    public void setEndTime(String endTime)
     {
         this.endTime = endTime;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public void setDescription(String description)
-    {
-        this.description = description;
     }
 
     @Override
     public String toString()
     {
-        return "Event{" +
+        return "EventModel{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", location='" + location + '\'' +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 '}';
     }
 }

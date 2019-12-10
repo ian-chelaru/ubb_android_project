@@ -12,12 +12,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.ian.sporteventsapp.adapters.EventListAdapter;
 import com.ian.sporteventsapp.entities.Event;
+import com.ian.sporteventsapp.rest.model.EventModel;
+import com.ian.sporteventsapp.rest.services.EventRestService;
+import com.ian.sporteventsapp.util.EventConverter;
 import com.ian.sporteventsapp.viewmodel.EventViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.time.LocalTime;
+import java.util.List;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -26,6 +42,7 @@ public class MainActivity extends AppCompatActivity
 
     private EventViewModel eventViewModel;
     private Event eventToBeUpdated;
+    private EventRestService eventRestService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,6 +58,19 @@ public class MainActivity extends AppCompatActivity
         eventViewModel = ViewModelProviders.of(this).get(EventViewModel.class);
         eventViewModel.getAllEvents().observe(this, eventListAdapter::setEvents
         );
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://10.0.2.2:8080/api/")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        eventRestService = retrofit.create(EventRestService.class);
+
+        getAllServerEvents();
     }
 
     @Override
@@ -56,7 +86,7 @@ public class MainActivity extends AppCompatActivity
                 updateEvent(eventSelected);
                 break;
             case R.id.remove_event:
-                eventViewModel.delete(eventSelected);
+                deleteServerEvent(eventSelected);
                 break;
         }
 
@@ -87,7 +117,12 @@ public class MainActivity extends AppCompatActivity
 
     private void updateEvent(Event event)
     {
-        eventToBeUpdated = event;
+        eventToBeUpdated = new Event();
+        eventToBeUpdated.setId(event.getId());
+        eventToBeUpdated.setName(event.getName());
+        eventToBeUpdated.setLocation(event.getLocation());
+        eventToBeUpdated.setStartTime(event.getStartTime());
+        eventToBeUpdated.setEndTime(event.getEndTime());
 
         Intent intent = new Intent(this, EventActivity.class);
         intent.putExtra("event_name", eventToBeUpdated.getName());
@@ -108,7 +143,8 @@ public class MainActivity extends AppCompatActivity
             {
                 assert data != null;
                 Event newEvent = createEventFromIntent(data);
-                eventViewModel.insert(newEvent);
+//                eventViewModel.insert(newEvent);
+                insertServerEvent(newEvent);
             }
         }
         else if (requestCode == UPDATE_EVENT_REQUEST)
@@ -122,7 +158,7 @@ public class MainActivity extends AppCompatActivity
                 eventToBeUpdated.setStartTime(newEvent.getStartTime());
                 eventToBeUpdated.setEndTime(newEvent.getEndTime());
                 eventToBeUpdated.setDescription(newEvent.getDescription());
-                eventViewModel.update(eventToBeUpdated);
+                updateServerEvent(eventToBeUpdated);
             }
         }
     }
@@ -142,6 +178,167 @@ public class MainActivity extends AppCompatActivity
         event.setEndTime(LocalTime.parse(eventEndTime));
         event.setDescription(eventDescription);
         return event;
+    }
+
+    private void insertServerEvent(Event event)
+    {
+        EventModel eventModel = EventConverter.convertEventToEventModel(event);
+        eventModel.setId(0);
+        eventRestService.insert(eventModel).enqueue(new Callback<EventModel>()
+        {
+            @Override
+            public void onResponse(@NotNull Call<EventModel> call, @NotNull Response<EventModel> response)
+            {
+                int statusCode = response.code();
+                System.out.println(statusCode);
+                if (response.isSuccessful())
+                {
+                    EventModel responseBody = response.body();
+                    System.out.println(responseBody);
+                    assert responseBody != null;
+                    eventViewModel.insert(EventConverter.convertEventModelToEvent(responseBody));
+                }
+                else
+                {
+                    String errorMessage;
+                    try
+                    {
+                        errorMessage = response.errorBody().string();
+                    } catch (IOException e)
+                    {
+                        errorMessage = "Error message cannot be obtained!";
+                        e.printStackTrace();
+                    }
+                    System.out.println(errorMessage);
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<EventModel> call, @NotNull Throwable t)
+            {
+                eventViewModel.insert(event);
+                displayToastMessage("No internet connection. Data persisted locally.");
+            }
+        });
+    }
+
+    private void getAllServerEvents()
+    {
+        eventRestService.getAll().enqueue(new Callback<List<EventModel>>()
+        {
+            @Override
+            public void onResponse(@NotNull Call<List<EventModel>> call, @NotNull Response<List<EventModel>> response)
+            {
+                if (response.isSuccessful())
+                {
+                    List<EventModel> responseBody = response.body();
+                    assert responseBody != null;
+                    eventViewModel.deleteAll();
+                    responseBody.forEach(eventModel ->
+                            eventViewModel.insert(EventConverter.convertEventModelToEvent(eventModel)));
+                }
+                else
+                {
+                    int errorStatusCode = response.code();
+                    String errorMessage;
+                    try
+                    {
+                        errorMessage = response.errorBody().string();
+                    } catch (IOException e)
+                    {
+                        errorMessage = "Error message cannot be obtained!";
+                        e.printStackTrace();
+                    }
+                    System.out.println(errorStatusCode);
+                    System.out.println(errorMessage);
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<List<EventModel>> call, @NotNull Throwable t)
+            {
+                displayToastMessage("No internet connection. Local data displayed.");
+            }
+        });
+    }
+
+    private void updateServerEvent(Event event)
+    {
+        EventModel eventModel = EventConverter.convertEventToEventModel(event);
+        eventRestService.update(eventModel).enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(@NotNull Call<Void> call, @NotNull Response<Void> response)
+            {
+                int statusCode = response.code();
+                System.out.println(statusCode);
+                if (response.isSuccessful())
+                {
+                    eventViewModel.update(event);
+                }
+                else
+                {
+                    String errorMessage;
+                    try
+                    {
+                        errorMessage = response.errorBody().string();
+                    } catch (IOException e)
+                    {
+                        errorMessage = "Error message cannot be obtained!";
+                        e.printStackTrace();
+                    }
+                    System.out.println(errorMessage);
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<Void> call, @NotNull Throwable t)
+            {
+                displayToastMessage("No internet connection. Update operation not available.");
+            }
+        });
+    }
+
+    private void deleteServerEvent(Event event)
+    {
+        EventModel eventModel = EventConverter.convertEventToEventModel(event);
+        eventRestService.delete(eventModel).enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(@NotNull Call<Void> call, @NotNull Response<Void> response)
+            {
+                int statusCode = response.code();
+                System.out.println(statusCode);
+                if (response.isSuccessful())
+                {
+                    eventViewModel.delete(event);
+                }
+                else
+                {
+                    String errorMessage;
+                    try
+                    {
+                        errorMessage = response.errorBody().string();
+                    } catch (IOException e)
+                    {
+                        errorMessage = "Error message cannot be obtained!";
+                        e.printStackTrace();
+                    }
+                    System.out.println(errorMessage);
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<Void> call, @NotNull Throwable t)
+            {
+                displayToastMessage("No internet connection. Delete operation not available.");
+            }
+        });
+    }
+
+    private void displayToastMessage(String message)
+    {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
 }
