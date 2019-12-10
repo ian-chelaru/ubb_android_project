@@ -23,11 +23,9 @@ import com.ian.sporteventsapp.viewmodel.EventViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
